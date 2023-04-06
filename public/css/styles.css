@@ -7,15 +7,15 @@ html {
 
 h1 {
   color: #fff;
-  padding: 10px;
+  padding: .5em;
 }
 
 .box {
-  max-width: 400px;
-  margin: 50px auto;
+  max-width: 25em;
+  margin: 3em auto;
   background: white;
-  border-radius: 5px;
-  box-shadow: 5px 5px 15px -5px rgba(0, 0, 0, 0.3);
+  border-radius: .2em;
+  box-shadow: 20px 15px 15px -5px rgba(0, 0, 0, 0.3);
 }
 
 #heading {
@@ -98,4 +98,8 @@ footer {
   color: white;
   color: rgba(0, 0, 0, 0.5);
   text-align: center;
+}
+
+body{
+  height: 100vh;
 }

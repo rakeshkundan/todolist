@@ -83,9 +83,12 @@ app.get("/:customList", (req, res) => {
                 console.log(result);
                 list.save();
                 // res.render("list", { listTitle: result[0].name, newListItems: result[0].items });
+                setTimeout(()=>{
                 res.redirect("/" + customListname);
-
+                },1000);
             }
+
+            
             else {
                 if(result[0].items.length==0)
                 {
@@ -96,8 +99,8 @@ app.get("/:customList", (req, res) => {
                 // console.log(result[0]);
                 // setInterval(() => {
                     res.render("list", { listTitle: result[0].name, newListItems: result[0].items });
-                    
-                // }, 200);
+                // }, 1000);
+                
                 
             }
         });
