@@ -83,9 +83,9 @@ app.get("/:customList", (req, res) => {
                 console.log(result);
                 list.save();
                 // res.render("list", { listTitle: result[0].name, newListItems: result[0].items });
-                setTimeout(()=>{
+                 //setTimeout(()=>{
                 res.redirect("/" + customListname);
-                },1000);
+                 //},1000);
             }
 
             
