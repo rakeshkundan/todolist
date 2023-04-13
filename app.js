@@ -158,6 +158,7 @@ app.post("/register", (req, res) => {
                         res.redirect("/"+userName);
                     });
                 }
+                
             });
         }
     })
