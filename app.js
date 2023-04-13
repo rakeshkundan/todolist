@@ -35,8 +35,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-mongoose.connect("mongodb://localhost:27017/todolistDB");
-// mongoose.connect("mongodb+srv://admin-rakesh:Rks887354@cluster0.9492dag.mongodb.net/todolistDB");
+// mongoose.connect("mongodb://localhost:27017/todolistDB");
+mongoose.connect("mongodb+srv://admin-rakesh:Rks887354@cluster0.9492dag.mongodb.net/todolistDB");
 // const todoschema=new mongoose.Schema({
 //   name:String
 // }); 
@@ -92,7 +92,7 @@ passport.deserializeUser(function (id, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.SECRET,
-    callbackURL: "http://localhost:3000/auth/google/googlelogin"
+    callbackURL: "https://rakesh-todolist-zphc.onrender.com/auth/google/googlelogin"
 
 },
     function (accessToken, refreshToken, profile, cb) {
@@ -158,7 +158,7 @@ app.post("/register", (req, res) => {
                         res.redirect("/"+userName);
                     });
                 }
-                
+
             });
         }
     })
