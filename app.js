@@ -1,11 +1,19 @@
 //jshint esversion:6
-
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require('mongoose');
-const _=require("lodash");
+const _ = require("lodash");
+
 
 const app = express();
+
+
+const session = require('express-session'); ///pakage for express-session
+const passport = require('passport');
+const passportLocalMongoose = require("passport-local-mongoose");
+var GoogleStrategy = require('passport-google-oauth20').Strategy;
+const findOrCreate = require('mongoose-findorcreate');
 
 app.set('view engine', 'ejs');
 
@@ -16,14 +24,25 @@ app.use(express.static("public"));
 const workItems = [];
 
 
-// mongoose.connect("mongodb://localhost:27017/todolistDB");
-mongoose.connect("mongodb+srv://admin-rakesh:Rks887354@cluster0.9492dag.mongodb.net/todolistDB");
+app.use(session({
+    secret: 'My name is Rakesh Kundan',
+    resave: false,
+    saveUninitialized: true,
+    // cookie: { secure: true }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+mongoose.connect("mongodb://localhost:27017/todolistDB");
+// mongoose.connect("mongodb+srv://admin-rakesh:Rks887354@cluster0.9492dag.mongodb.net/todolistDB");
 // const todoschema=new mongoose.Schema({
 //   name:String
 // }); 
-const todoschema = {
+const todoschema = new mongoose.Schema({
     name: String
-};
+});
 
 const Item = mongoose.model("Item", todoschema);
 
@@ -40,70 +59,168 @@ const item3 = new Item({
 
 const defaultitems = [item1, item2, item3];
 
-const listSchema = {
+const listSchema = new mongoose.Schema({
+    username: String,
+    password: String,
+    googleId: String,
     name: String,
     items: [todoschema]
-}
+});
+
+
+listSchema.plugin(passportLocalMongoose);
+listSchema.plugin(findOrCreate);
 const List = mongoose.model("list", listSchema);
+
+
+passport.use(List.createStrategy());
+
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+    // where is this user.id going? Are we supposed to access this anywhere?
+});
+
+// used to deserialize the user
+passport.deserializeUser(function (id, done) {
+    List.find({ _id: id }).then(function (user) {
+        // console.log(user);
+        done(null, user);
+    });
+});
+
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.SECRET,
+    callbackURL: "http://localhost:3000/auth/google/googlelogin"
+
+},
+    function (accessToken, refreshToken, profile, cb) {
+        // console.log(profile);
+        List.findOrCreate({ googleId: profile.id,name:profile.displayName,items:defaultitems }, function (err, user) {
+            return cb(err, user);
+        });
+    }
+));
+
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile'] }));
+
+app.get("/auth/google/googlelogin",
+    passport.authenticate("google", { failureRedirect: '/login' }),
+    function (req, res) {
+        // console.log(req.user);
+        const userName=req.user.name;
+        res.redirect("/"+userName);
+    });
+
 
 
 
 app.get("/", function (req, res) {
-    Item.find().then((result) => {
-        if (result.length === 0) {
 
-            //finding data from database
-            Item.insertMany(defaultitems).then(() => {
-                console.log("Succesfully saved");
-            })
-                .catch((err) => {
-                    console.log("Error");
-                });
-            res.render("list", { listTitle: "Today", newListItems: result });
-        }
-        else {
-            res.render("list", { listTitle: "Today", newListItems: result });
-        }
-    });
+    if (req.isAuthenticated()) {
+        console.log(req.user);
+        res.redirect("/"+req.user.name);
+
+    }
+    else {
+        res.render("index");
+    }
 
 });
 
-//Dyanamic Routing
+app.get('/login', function (req, res) {
+    res.render("login");
+});
+
+////register route
+app.get('/register', function (req, res) {
+    res.render("register");
+});
+
+app.post("/register", (req, res) => {
+    List.findOne({username:req.body.username}).then((result)=>{
+        if(result!=null)
+        {
+            res.redirect("/login");
+        }
+        else{
+            List.register({ username: req.body.username, name: req.body.name, items: defaultitems }, req.body.password, (err, user) => {
+
+                if (err) {
+                    console.log(err);
+                    res.redirect("/register");
+                }
+                else {
+                    passport.authenticate("local")(req, res, () => {
+                        const userName=req.user.name
+                        res.redirect("/"+userName);
+                    });
+                }
+                
+            });
+        }
+    })
+
+});
+
+
+app.post("/login", (req, res) => {
+    const newUser = new List({
+        username: req.body.username,
+        password: req.body.password
+    });
+    req.login(newUser, function (err) {
+        if (err) {
+            res.redirect("/login");
+        }
+        else {
+            passport.authenticate("local")(req, res, () => {
+                res.redirect("/" + (req.user).name);
+            });
+
+        }
+    })
+});
+// app.get("/",(req,res)=>{
+//     res.render("index");
+// });
+// app.get("/login",(req,res)=>{
+//     res.render("login");
+// });
+// app.get("/register",(req,res)=>{
+//     res.render("register");
+// });
+
+// Dyanamic Routing
 app.get("/:customList", (req, res) => {
+    if(req.isAuthenticated())
+    {
+    const listitem=(req.user)[0].items;
+    // console.log(listitem);
     const customListname = _.capitalize(req.params.customList);
 
     if (customListname != "") {
-        List.find({ name: customListname }).then(function (result) {
-            // console.log(result);
-            if (result.length == 0) {
-                const list = new List({
-                    name: customListname,
-                    items: defaultitems
+                List.findOne({ username: (req.user)[0].username }).then(function (result) {
+                    // console.log(result);
+                    if (result == null) {
+                        res.redirect("/register");
+                    }
+                    else {
+                        if (result.items.length == 0) {
+                            result.items = defaultitems;
+                            result.save();
+                        }
+                        res.render("list", { listTitle: result.name, newListItems: listitem});
+                    }
                 });
-                console.log(result);
-                list.save();
-                // res.render("list", { listTitle: result[0].name, newListItems: result[0].items });
-                 //setTimeout(()=>{
-                res.redirect("/" + customListname);
-                 //},1000);
             }
 
-            
-            else {
-                if(result[0].items.length==0)
-                {
-                    result[0].items=defaultitems;
-                    result[0].save(); 
-                }
 
-                // console.log(result[0]);
-                // setInterval(() => {
-                    res.render("list", { listTitle: result[0].name, newListItems: result[0].items });
-                // }, 1000);
-                
-                
-            }
-        });
+
+
+
     }
 });
 
@@ -114,24 +231,36 @@ app.get("/:customList", (req, res) => {
 
 
 app.post("/", function (req, res) {
-    const itemName = req.body.newItem;
-    const ListName = req.body.list;
-    console.log(ListName);
-    const item = new Item({
-        name: itemName
-    });
-    if (ListName == "Today") {
-        item.save();
-        res.redirect("/");
-    }
-    else {
-        List.find({ name: ListName }).then((result) => {
-            result[0].items.push(item);
-            // console.log(result[0].items);
-            result[0].save();
+    if (req.isAuthenticated()) {
+        const itemName = req.body.newItem;
+        const ListName=(req.user)[0];
+        const item = new Item({
+            name: itemName
+        });
+
+        List.findOne({ username: ListName.username }).then((result) => {
+            if (result != null) {
+                result.items.push(item);
+                result.save();
+                res.redirect("/"+ListName.name);
+            }
+            else {
+                res.redirect("/login");
+            }
 
         });
-        res.redirect("/" + ListName);
+    }
+    else {
+        req.logout(function (err) {
+            if (err) {
+                console.log(err);
+                res.redirect("/");
+            }
+            else {
+                res.redirect("/");
+            }
+    
+        })
     }
 });
 //custom posting
@@ -139,34 +268,18 @@ app.post("/", function (req, res) {
 
 
 app.post("/delete", function (req, res) {
-    const checkedItemId = req.body.checkbox;
-    const ListName = req.body.Listname;
-    console.log(checkedItemId);
-    if (ListName == "Today") {
-        Item.deleteOne({ _id: checkedItemId }).then(function (err) {
-            console.log(err); // Success
-        }).catch(function (error) {
-            console.log(error); // Failure
-        });
-        res.redirect("/");
+    if (req.isAuthenticated()) {
+        const checkedItemId = req.body.checkbox;
+        const ListName = (req.user)[0];
+        console.log(checkedItemId);
+            List.findOneAndUpdate({ username: ListName.username}, { $pull: { items: { _id: checkedItemId } } }).then((result) => {
+                console.log();
+            });
+            res.redirect("/" + ListName.name);
     }
-    else {
-        List.findOneAndUpdate({ name: ListName }, { $pull: { items: { _id: checkedItemId } } }).then((result) => {
-            console.log();
-        });
-        res.redirect("/" + ListName);
-
+    else{
+        res.redirect("/login");
     }
-    // Item.remove(({ _id:checkedItemId}), function (err) {
-    //     if (err){
-    //         console.log(err)
-    //     }
-    //     else{
-    //         console.log("Deleted Blogs");
-    //     }
-    //  });
-
-
 });
 
 
@@ -176,16 +289,22 @@ app.post("/delete", function (req, res) {
 
 
 
-app.get("/work", function (req, res) {
-    res.render("list", { listTitle: "Work List", newListItems: workItems });
-});
+app.post("/logout", (req, res) => {
+    req.logout(function (err) {
+        if (err) {
+            console.log(err);
+            res.redirect("/");
+        }
+        else {
+            res.redirect("/");
+        }
 
-app.get("/about", function (req, res) {
-    res.render("about");
+    })
+
 });
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 3000;
+    port = 3000;
 }
 
 app.listen(port, function () {
