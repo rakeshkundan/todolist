@@ -15,10 +15,11 @@ const passportLocalMongoose = require("passport-local-mongoose");
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const findOrCreate = require('mongoose-findorcreate');
 
-app.set('view engine', 'ejs');
 
+app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
 
 // const items = ["Buy Food", "Cook Food", "Eat Food"];
 const workItems = [];
@@ -93,18 +94,20 @@ passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.SECRET,
     callbackURL: "https://rakesh-todolist-zphc.onrender.com/auth/google/googlelogin"
+    // callbackURL: "http://localhost:3000/auth/google/googlelogin"
 
 },
-    function (accessToken, refreshToken, profile, cb) {
-        // console.log(profile);
-        List.findOrCreate({ googleId: profile.id,name:profile.displayName,items:defaultitems }, function (err, user) {
+    function (accessToken, refreshToken,profile, cb) {
+        console.log(profile);
+        // console.log(email.emails[0].value);
+        List.findOrCreate({ googleId: profile.id,username:profile.emails[0].value,name:profile.displayName,items:defaultitems }, function (err, user) {
             return cb(err, user);
         });
     }
 ));
 
 app.get('/auth/google',
-    passport.authenticate('google', { scope: ['profile'] }));
+    passport.authenticate('google', { scope: ['email','profile'] }));
 
 app.get("/auth/google/googlelogin",
     passport.authenticate("google", { failureRedirect: '/login' }),
@@ -113,7 +116,6 @@ app.get("/auth/google/googlelogin",
         const userName=req.user.name;
         res.redirect("/"+userName);
     });
-
 
 
 
@@ -200,7 +202,8 @@ app.get("/:customList", (req, res) => {
     const listitem=(req.user)[0].items;
     // console.log(listitem);
     const customListname = _.capitalize(req.params.customList);
-
+    // console.log(customListname);
+// console.log(req.user);
     if (customListname != "") {
                 List.findOne({ username: (req.user)[0].username }).then(function (result) {
                     // console.log(result);
