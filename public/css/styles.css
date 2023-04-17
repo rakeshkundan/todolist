@@ -103,3 +103,17 @@ footer {
 body{
   height: 100vh;
 }
+
+
+#img-div{
+  position:sticky;
+  left: 5%;
+  align-self: center;
+  z-index: 999;
+  width: 90%;
+  display: flex;
+  justify-content:space-between;
+  align-items: center;
+  /* border: solid red .2em; */
+  overflow: hidden;
+}

@@ -1,10 +1,11 @@
 <%- include("header") -%>
+<div id="img-div" >
+  <form action="/logout" method="post">
+    <button style="margin-right: 2em;"  type="submit">Logout</button>
+  </form>
+<img style="overflow: hidden;" src="<%=imgid%>" alt="Profile pic">
+</div>
   <div id="container">
-
-    <form action="/logout" method="post">
-      <button style="width: 5em;"  type="submit">Logout</button>
-    </form>
-
     <div class="box" id="heading">
       <h1>
         <%= listTitle %>
