@@ -101,7 +101,7 @@ passport.use(new GoogleStrategy({
     function (accessToken, refreshToken,profile, cb) {
         // console.log(profile);
         // console.log(email.emails[0].value);
-        List.findOrCreate({ googleId: profile.id,username:profile.emails[0].value,name:profile.displayName,imgURL:profile.photos[0].value,items:defaultitems }, function (err, user) {
+        List.findOrCreate({ googleId: profile.id,username:profile.emails[0].value,name:profile.displayName,imgURL:profile.photos[0].value }, function (err, user) {
             return cb(err, user);
         });
     }
