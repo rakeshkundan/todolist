@@ -59,7 +59,7 @@ const item2 = new Item({
     name: "hit + buttton to add new items"
 });
 const item3 = new Item({
-    name: "<-- hit checkbok to delete items"
+    name: "<-- hit checkbox to delete items"
 });
 
 const defaultitems = [item1, item2, item3];
