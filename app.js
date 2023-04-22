@@ -222,7 +222,7 @@ app.get("/:customList", (req, res) => {
                     // console.log(imgurl);
                     if(imgurl==null)
                     {
-                        imgurl="/images/person.png";
+                        imgurl="https://drive.google.com/uc?export=view&id=19IG0VAXEBHQcaCLIcqXjKa1qTDq6X5yp";
                     }
                     res.render("list", { listTitle: result.name, newListItems: listitem, imgid: imgurl });
                 }
