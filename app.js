@@ -7,10 +7,10 @@ const _ = require("lodash");
 
 
 const app = express();
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     next();
-  });
+});
 
 
 const session = require('express-session'); ///pakage for express-session
@@ -69,7 +69,7 @@ const listSchema = new mongoose.Schema({
     password: String,
     googleId: String,
     name: String,
-    imgURL:String,
+    imgURL: String,
     items: [todoschema]
 });
 
@@ -102,24 +102,24 @@ passport.use(new GoogleStrategy({
     // callbackURL: "http://localhost:3000/auth/google/googlelogin"
 
 },
-    function (accessToken, refreshToken,profile, cb) {
+    function (accessToken, refreshToken, profile, cb) {
         // console.log(profile);
         // console.log(email.emails[0].value);
-        List.findOrCreate({ googleId: profile.id,username:profile.emails[0].value,name:profile.displayName,imgURL:profile.photos[0].value }, function (err, user) {
+        List.findOrCreate({ googleId: profile.id, username: profile.emails[0].value, name: profile.displayName, imgURL: profile.photos[0].value }, function (err, user) {
             return cb(err, user);
         });
     }
 ));
 
 app.get('/auth/google',
-    passport.authenticate('google', { scope: ['email','profile'] }));
+    passport.authenticate('google', { scope: ['email', 'profile'] }));
 
 app.get("/auth/google/googlelogin",
     passport.authenticate("google", { failureRedirect: '/login' }),
     function (req, res) {
         // console.log(req.user);
-        const userName=req.user.name;
-        res.redirect("/"+userName);
+        const userName = req.user.name;
+        res.redirect("/" + userName);
     });
 
 
@@ -128,7 +128,7 @@ app.get("/", function (req, res) {
 
     if (req.isAuthenticated()) {
         console.log(req.user);
-        res.redirect("/"+req.user.name);
+        res.redirect("/" + req.user.name);
 
     }
     else {
@@ -147,12 +147,11 @@ app.get('/register', function (req, res) {
 });
 
 app.post("/register", (req, res) => {
-    List.findOne({username:req.body.username}).then((result)=>{
-        if(result!=null)
-        {
+    List.findOne({ username: req.body.username }).then((result) => {
+        if (result != null) {
             res.redirect("/login");
         }
-        else{
+        else {
             List.register({ username: req.body.username, name: req.body.name, items: defaultitems }, req.body.password, (err, user) => {
 
                 if (err) {
@@ -161,8 +160,8 @@ app.post("/register", (req, res) => {
                 }
                 else {
                     passport.authenticate("local")(req, res, () => {
-                        const userName=req.user.name
-                        res.redirect("/"+userName);
+                        const userName = req.user.name
+                        res.redirect("/" + userName);
                     });
                 }
 
@@ -202,31 +201,36 @@ app.post("/login", (req, res) => {
 
 // Dyanamic Routing
 app.get("/:customList", (req, res) => {
-    if(req.isAuthenticated())
-    {
-    const listitem=(req.user)[0].items;
-    // console.log(listitem);
-    const customListname = _.capitalize(req.params.customList);
-    // console.log(customListname);
-// console.log(req.user);
-    if (customListname != "") {
-                List.findOne({ username: (req.user)[0].username }).then(function (result) {
-                    // console.log(result);
-                    if (result == null) {
-                        res.redirect("/register");
+    if (req.isAuthenticated()) {
+        const listitem = (req.user)[0].items;
+        // console.log(listitem);
+        const customListname = _.capitalize(req.params.customList);
+        // console.log(customListname);
+        // console.log(req.user);
+        if (customListname != "") {
+            List.findOne({ username: (req.user)[0].username }).then(function (result) {
+                // console.log(result);
+                if (result == null) {
+                    res.redirect("/register");
+                }
+                else {
+                    if (result.items.length == 0) {
+                        result.items = defaultitems;
+                        result.save();
                     }
-                    else {
-                        if (result.items.length == 0) {
-                            result.items = defaultitems;
-                            result.save();
-                        }
-                        res.render("list", { listTitle: result.name, newListItems: listitem,imgid:result.imgURL});
+                    let imgurl=result.imgURL;
+                    // console.log(imgurl);
+                    if(imgurl==null)
+                    {
+                        imgurl="/images/person.png";
                     }
-                });
-            }
+                    res.render("list", { listTitle: result.name, newListItems: listitem, imgid: imgurl });
+                }
+            });
+        }
 
     }
-    else{
+    else {
         res.redirect("/login");
     }
 });
@@ -240,7 +244,7 @@ app.get("/:customList", (req, res) => {
 app.post("/", function (req, res) {
     if (req.isAuthenticated()) {
         const itemName = req.body.newItem;
-        const ListName=(req.user)[0];
+        const ListName = (req.user)[0];
         const item = new Item({
             name: itemName
         });
@@ -249,7 +253,7 @@ app.post("/", function (req, res) {
             if (result != null) {
                 result.items.push(item);
                 result.save();
-                res.redirect("/"+ListName.name);
+                res.redirect("/" + ListName.name);
             }
             else {
                 res.redirect("/login");
@@ -266,7 +270,7 @@ app.post("/", function (req, res) {
             else {
                 res.redirect("/");
             }
-    
+
         })
     }
 });
@@ -279,18 +283,20 @@ app.post("/delete", function (req, res) {
         const checkedItemId = req.body.checkbox;
         const ListName = (req.user)[0];
         console.log(checkedItemId);
-            List.findOneAndUpdate({ username: ListName.username}, { $pull: { items: { _id: checkedItemId } } }).then((result) => {
-                console.log();
-            });
-            res.redirect("/" + ListName.name);
+        List.findOneAndUpdate({ username: ListName.username }, { $pull: { items: { _id: checkedItemId } } }).then((result) => {
+            console.log();
+        });
+        res.redirect("/" + ListName.name);
     }
-    else{
+    else {
         res.redirect("/login");
     }
 });
 
 
-
+// app.post('/upload', function (req, res) {
+//     console.log(req.files);
+// });
 
 
 

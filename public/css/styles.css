@@ -105,6 +105,7 @@ body{
 }
 .img-div{
   position:absolute;
+  left: 0;
   background-color: rgba(211,127,224,.3);
   align-self: center;
   z-index: 999;
@@ -121,6 +122,7 @@ body{
 
 
 #Menu{
+  
   width: 2em;
   margin-left: .5em;
   margin-top: .5em;
@@ -138,11 +140,20 @@ body{
 }
 .profile{
   position: absolute;
-  top:5%;
-  left: 90%;
-  width: 7%;
+  border-radius: .9em;
+  top:.5em;
+  left: 92%;
+  width: 6%;
   height:auto;
 }
+
+
+
+
+
+
+
+
 
 /* <button class="button-58" role="button">Button 58</button> */
 
