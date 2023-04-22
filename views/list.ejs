@@ -1,45 +1,54 @@
 <%- include("header") -%>
-<div id="img-div" >
-  <form action="/logout" method="post">
-    <button style="margin-right: 2em;"  type="submit">Logout</button>
-  </form>
-<img style="overflow: hidden;" src="<%=imgid%>" alt="Profile pic">
-</div>
-  <div id="container">
-    <div class="box" id="heading">
-      <h1>
-        <%= listTitle %>
-      </h1>
-    </div>
 
-    <div class="box">
-      <!-- <% for (let i=0; i<newListItems.length; i++) { %>
+  <div class="maincont">
+    <div>
+      <header style="z-index:0;">
+        <img id="Menu" src="/images/menu.png" alt="">
+        <div id="img-div" class="img-div invisible">
+          <form action="/logout" method="post">
+            <button  class="button-58"  style=" background-color: transparent; color: black;" type="submit">Logout</button>
+          </form>
+        </div>
+        <img class="profile" style="overflow: hidden; " src="<%=imgid%>" alt="Profile pic">
+
+      </header>
+    </div>
+    <div>
+
+      <div id="container">
+        <div class="box" id="heading">
+          <h1>
+            <%= listTitle %>
+          </h1>
+        </div>
+
+        <div class="box">
+          <!-- <% for (let i=0; i<newListItems.length; i++) { %>
       <div class="item">
         <input type="checkbox">
         <p><%=  newListItems[i].name  %></p>
       </div>
       <% } %> -->
+          <%newListItems.forEach((item)=>{%>
+            <form action="/delete" method="post">
+              <div class="item">
+                <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="this.form.submit()">
+                <p>
+                  <%=item.name%>
+                </p>
+              </div>
+              <input type="hidden" name="Listname" value="<%=listTitle%>">
+            </form>
+            <% }); %>
 
-
-      <%newListItems.forEach((item)=>{%>
-        <form action="/delete" method="post">
-          <div class="item">
-            <input type="checkbox" name="checkbox" value="<%=item._id%>" onChange="this.form.submit()">
-            <p>
-              <%=item.name%>
-            </p>
-          </div>
-          <input type="hidden" name="Listname" value="<%=listTitle%>">
-        </form>
-        <% }); %>
-
-
-          <form class="item" action="/" method="post">
-            <input type="text" name="newItem" placeholder="New Item" required
-              oninvalid="this.setCustomValidity('Please Enter your target')" oninput="setCustomValidity('')"
-              autocomplete="off">
-            <button type="submit" name="list" value="<%=listTitle%>">+</button>
-          </form>
+              <form class="item" action="/" method="post">
+                <input type="text" name="newItem" placeholder="New Item" required
+                  oninvalid="this.setCustomValidity('Please Enter your target')" oninput="setCustomValidity('')"
+                  autocomplete="off">
+                <button class="button1"type="submit" name="list" value="<%=listTitle%>">+</button>
+              </form>
+        </div>
+      </div>
     </div>
   </div>
 

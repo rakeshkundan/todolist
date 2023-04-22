@@ -56,7 +56,7 @@ form.item {
   margin-left: 20px;
 }
 
-button {
+.button1{
   min-height: 50px;
   width: 50px;
   border-radius: 50%;
@@ -103,17 +103,96 @@ footer {
 body{
   height: 100vh;
 }
-
-
-#img-div{
-  position:sticky;
-  left: 5%;
+.img-div{
+  position:absolute;
+  background-color: rgba(211,127,224,.3);
   align-self: center;
   z-index: 999;
-  width: 90%;
+  width:max-content;
+  height: 100vh;
   display: flex;
+  flex-direction: column;
   justify-content:space-between;
   align-items: center;
-  /* border: solid red .2em; */
+  transition: all .2s ease-in;
   overflow: hidden;
+}
+
+
+
+#Menu{
+  width: 2em;
+  margin-left: .5em;
+  margin-top: .5em;
+}
+/* .maincont
+{
+  display: inline;
+  position: absolute;
+} */
+
+
+
+.invisible{
+  display: none;
+}
+.profile{
+  position: absolute;
+  top:5%;
+  left: 90%;
+  width: 7%;
+  height:auto;
+}
+
+/* <button class="button-58" role="button">Button 58</button> */
+
+/* CSS */
+.button-58 {
+  align-items: center;
+  background-color: #06f;
+  border: 2px solid #06f;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  fill: #000;
+  font-family: Inter,sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: -.8px;
+  line-height: 24px;
+  /* min-width: 140px; */
+  width: 100%;
+  outline: 0;
+  padding: 0 17px;
+  text-align: center;
+  text-decoration: none;
+  transition: all .3s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-58:focus {
+  color: #171e29;
+}
+
+.button-58:hover {
+  background-color: #3385ff;
+  border-color: #3385ff;
+  fill: #06f;
+}
+
+.button-58:active {
+  background-color: #3385ff;
+  border-color: #3385ff;
+  fill: #06f;
+}
+
+@media (min-width: 768px) {
+  .button-58 {
+    min-width: 170px;
+  }
 }

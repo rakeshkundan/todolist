@@ -225,10 +225,9 @@ app.get("/:customList", (req, res) => {
                 });
             }
 
-
-
-
-
+    }
+    else{
+        res.redirect("/login");
     }
 });
 
