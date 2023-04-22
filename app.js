@@ -7,6 +7,10 @@ const _ = require("lodash");
 
 
 const app = express();
+app.use(function(req, res, next) {
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    next();
+  });
 
 
 const session = require('express-session'); ///pakage for express-session
@@ -297,6 +301,7 @@ app.post("/logout", (req, res) => {
     req.logout(function (err) {
         if (err) {
             console.log(err);
+            res.clearCookie();
             res.redirect("/");
         }
         else {
