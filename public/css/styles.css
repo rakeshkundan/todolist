@@ -122,10 +122,10 @@ body{
 
 
 #Menu{
-  
   width: 2em;
   margin-left: .5em;
   margin-top: .5em;
+  cursor: pointer;
 }
 /* .maincont
 {
