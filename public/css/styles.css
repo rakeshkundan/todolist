@@ -127,6 +127,20 @@ body{
   margin-top: .5em;
   cursor: pointer;
 }
+
+.activate{
+  /* background-color: #974e4e; */
+  /* border: solid rgb(58, 49, 49) .2em; */
+  transform: rotate(180deg);
+  transition: all .5s;
+}
+.deactivate
+{
+  transform: rotate(0);
+  transition: all .5s;
+
+}
+
 /* .maincont
 {
   display: inline;

@@ -3,10 +3,11 @@
   <div class="maincont">
     <div>
       <header style="z-index:0;">
-        <img id="Menu" src="/images/menu.png" alt="">
+        <img id="Menu" class="deactivate" src="/images/menu.png" alt="">
         <div id="img-div" class="img-div invisible">
           <form action="/logout" method="post">
-            <button  class="button-58"  style=" background-color: transparent; color: black;" type="submit">Logout</button>
+            <button class="button-58" style=" background-color: transparent; color: black;"
+              type="submit">Logout</button>
           </form>
         </div>
         <img class="profile" style="overflow: hidden; " src="<%=imgid%>" alt="Profile pic">
@@ -14,11 +15,11 @@
           <input type='file' name='fileUploaded'>
           <input type='submit'>
         </form> -->
-      </body>
+
 
       </header>
     </div>
-    <div>
+    <div class="body">
 
       <div id="container">
         <div class="box" id="heading">
@@ -50,7 +51,7 @@
                 <input type="text" name="newItem" placeholder="New Item" required
                   oninvalid="this.setCustomValidity('Please Enter your target')" oninput="setCustomValidity('')"
                   autocomplete="off">
-                <button class="button1"type="submit" name="list" value="<%=listTitle%>">+</button>
+                <button class="button1" type="submit" name="list" value="<%=listTitle%>">+</button>
               </form>
         </div>
       </div>

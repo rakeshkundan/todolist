@@ -1,4 +1,11 @@
 let path=document.getElementById("Menu").addEventListener("click",()=>{
     document.getElementById("img-div").classList.toggle("invisible");
+    document.getElementById("Menu").classList.toggle("activate");
+    document.getElementById("Menu").classList.toggle("deactivate");
 
+  });
+  document.getElementsByClassName("body")[0].addEventListener("click",()=>{
+    document.getElementById("img-div").classList.toggle("invisible");
+    document.getElementById("Menu").classList.toggle("activate");
+    document.getElementById("Menu").classList.toggle("deactivate");
   });
