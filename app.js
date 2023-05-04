@@ -44,7 +44,7 @@ app.use(passport.session());
 mongoose.connect("mongodb+srv://admin-rakesh:Rks887354@cluster0.9492dag.mongodb.net/todolistDB");
 // const todoschema=new mongoose.Schema({
 //   name:String
-// }); 
+// });
 const todoschema = new mongoose.Schema({
     name: String
 });
