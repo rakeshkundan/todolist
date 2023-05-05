@@ -183,6 +183,7 @@ app.post("/login", (req, res) => {
         }
         else {
             passport.authenticate("local")(req, res, () => {
+                
                 res.redirect("/" + (req.user).name);
             });
 
@@ -282,9 +283,9 @@ app.post("/delete", function (req, res) {
     if (req.isAuthenticated()) {
         const checkedItemId = req.body.checkbox;
         const ListName = (req.user)[0];
-        console.log(checkedItemId);
+        // console.log(checkedItemId);
         List.findOneAndUpdate({ username: ListName.username }, { $pull: { items: { _id: checkedItemId } } }).then((result) => {
-            console.log();
+            console.log("Deleted");
         });
         res.redirect("/" + ListName.name);
     }
