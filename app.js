@@ -33,6 +33,7 @@ app.use(session({
     secret: 'My name is Rakesh Kundan',
     resave: false,
     saveUninitialized: true,
+    cookie:{_expires : 24*60*60*1000}
     // cookie: { secure: true }
 }));
 
