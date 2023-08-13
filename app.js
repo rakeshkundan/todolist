@@ -99,8 +99,8 @@ passport.deserializeUser(function (id, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.SECRET,
-    callbackURL: "https://rakesh-todolist-azlt.onrender.com/auth/google/googlelogin"
-    // callbackURL: "http://localhost:3000/auth/google/googlelogin"
+    // callbackURL: "https://rakesh-todolist-azlt.onrender.com/auth/google/googlelogin"
+    callbackURL: "http://localhost:3000/auth/google/googlelogin"
 
 },
     function (accessToken, refreshToken, profile, cb) {

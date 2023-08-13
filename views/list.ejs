@@ -1,5 +1,16 @@
 <%- include("header") -%>
 
+
+<div class="clock-main">
+  <second class="clock">
+    <div class="seconds"></div>
+    <div class="minutes"></div>
+    <div class="minute">44</div>
+    <div class="hour"></div>
+  </second>
+  
+</div>
+
   <div class="maincont">
     <div>
       <header style="z-index:0;">
@@ -10,6 +21,7 @@
               type="submit">Logout</button>
           </form>
         </div>
+        
         <img class="profile" style="overflow: hidden; " src="<%=imgid%>" alt="Profile pic">
         <!-- <form method='post' action='/upload' enctype="multipart/form-data">
           <input type='file' name='fileUploaded'>
